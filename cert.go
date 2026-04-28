@@ -72,7 +72,9 @@ func (m *mkcert) makeCert(hosts []string) {
 			OrganizationalUnit: []string{userAndHostname},
 		},
 
-		NotBefore: time.Now(), NotAfter: expiration,
+		// Backdating NotBefore by 1 hour to avoid clock skew issues with
+		// VMs and containers that might be slightly behind.
+		NotBefore: time.Now().Add(-1 * time.Hour), NotAfter: expiration,
 
 		KeyUsage: x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
 	}
@@ -105,7 +107,4 @@ func (m *mkcert) makeCert(hosts []string) {
 		tpl.Subject.CommonName = hosts[0]
 	}
 
-	cert, err := x509.CreateCertificate(rand.Reader, tpl, m.caCert, pub, m.caKey)
-	fatalIfErr(err, "failed to generate certificate")
-
-	certFile, keyFile, p12File :=
+	cert, err := x509.CreateCertificate
