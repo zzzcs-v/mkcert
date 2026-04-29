@@ -72,9 +72,9 @@ func (m *mkcert) makeCert(hosts []string) {
 			OrganizationalUnit: []string{userAndHostname},
 		},
 
-		// Backdating NotBefore by 2 hours instead of 1 to give a bit more
-		// buffer for VMs/containers with larger clock drift.
-		NotBefore: time.Now().Add(-2 * time.Hour), NotAfter: expiration,
+		// Backdating NotBefore by 3 hours instead of 2 to give extra buffer
+		// for my homelab VMs which tend to have worse clock drift than normal.
+		NotBefore: time.Now().Add(-3 * time.Hour), NotAfter: expiration,
 
 		KeyUsage: x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
 	}
@@ -101,4 +101,4 @@ func (m *mkcert) makeCert(hosts []string) {
 		tpl.ExtKeyUsage = append(tpl.ExtKeyUsage, x509.ExtKeyUsageEmailProtection)
 	}
 
-	// IIS (the main target of PKCS #12 files), only shows the de
+	// IIS (the main target of PKCS #12 files), only shows the 
